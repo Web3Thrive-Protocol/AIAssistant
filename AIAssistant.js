@@ -11,7 +11,11 @@ export default function AIAssistant() {
   };
 
   const handleSubmit = async () => {
-    if (!userInput.trim()) return;
+    if (loading) return; // Prevent multiple submissions
+    if (!userInput.trim()) {
+      alert("Please enter a question.");
+      return;
+    }
 
     setLoading(true);
     setResponse(""); // Clear previous response
@@ -19,7 +23,7 @@ export default function AIAssistant() {
     try {
       const client = new OpenAI({
         baseURL: "https://models.inference.ai.azure.com",
-        apiKey: "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"
+        apiKey: "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", // Use environment variable
       });
 
       const aiResponse = await client.chat.completions.create({
@@ -35,7 +39,7 @@ export default function AIAssistant() {
       setResponse(aiResponse.choices[0].message.content);
     } catch (err) {
       console.error("Error fetching AI response:", err);
-      setResponse("An error occurred. Please try again.");
+      setResponse("An error occurred while fetching the AI response. Please check your internet connection or try again later.");
     } finally {
       setLoading(false);
     }
